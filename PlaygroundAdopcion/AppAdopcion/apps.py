@@ -1,6 +1,5 @@
 from django.apps import AppConfig
 
-
-class AppcoderConfig(AppConfig):
+class AppAdopcionConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'AppCoder'
+    name = 'AppAdopcion'

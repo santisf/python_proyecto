@@ -1,0 +1,29 @@
+{% extends "AppAdopcion/inicio.html" %}
+{% load static %}
+{% block contenidoQueCambia %}
+  <div class="container py-4">
+    <h1>Animales disponibles</h1>
+
+    {% if cursos %}
+      <div class="row">
+        {% for animal in cursos %}
+          <div class="col-md-4 mb-3">
+            <div class="card h-100">
+              <div class="card-body">
+                <h5 class="card-title">{{ animal.nombre }}</h5>
+                <p class="card-text"><strong>Especie:</strong> {{ animal.especie }}</p>
+                <p class="card-text"><strong>Edad:</strong> {{ animal.edad }}</p>
+                {% if animal.descripcion %}
+                  <p class="card-text">{{ animal.descripcion }}</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No hay animales registrados.</p>
+    {% endif %}
+
+  </div>
+{% endblock %}

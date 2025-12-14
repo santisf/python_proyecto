@@ -1,0 +1,20 @@
+{% extends "AppAdopcion/inicio.html" %}
+{% load static %}
+{% block contenidoQueCambia %}
+<div class="container py-4">
+  <h1>Solicitudes</h1>
+
+  {% if solicitudes %}
+    <p>Listado de solicitudes de adopción:</p>
+    <ul class="list-group">
+      {% for s in solicitudes %}
+        <li class="list-group-item">
+          <strong>{{ s.animal_nombre }}</strong> — solicitante: {{ s.adoptante_nombre }}; fecha: {{ s.fecha_de_solicitud }}; estado: {{ s.estado }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No hay solicitudes registradas.</p>
+  {% endif %}
+</div>
+{% endblock %}

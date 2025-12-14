@@ -2,22 +2,22 @@ from django.db import models
 
 # Create your models here.
 
-class Curso(models.Model):
+from django.db import models
+
+class Animal(models.Model):
     nombre = models.CharField(max_length=40)
-    camada = models.IntegerField()
+    especie = models.CharField(max_length=40)
+    edad = models.CharField(max_length=20)
+    descripcion = models.CharField(max_length=200, blank=True)
 
-class Estudiante(models.Model):
-    nombre = models.CharField(max_length=30)
-    apellido = models.CharField(max_length=30)
+class Adoptante(models.Model):
+    nombre = models.CharField(max_length=40)
+    apellido = models.CharField(max_length=40)
     email = models.EmailField()
+    telefono = models.CharField(max_length=30, blank=True)
 
-class Profesor(models.Model):
-    nombre = models.CharField(max_length=30)
-    apellido = models.CharField(max_length=30)
-    email = models.EmailField()
-    profesion = models.CharField(max_length=30)
-
-class Entregable(models.Model):
-    nombre = models.CharField(max_length=30)
-    fechaDeEntrega = models.DateField()
-    entregado = models.BooleanField()
+class Solicitud(models.Model):
+    animal_nombre = models.CharField(max_length=100)
+    adoptante_nombre = models.CharField(max_length=100)
+    fecha_de_solicitud = models.DateField()
+    estado = models.CharField(max_length=30)

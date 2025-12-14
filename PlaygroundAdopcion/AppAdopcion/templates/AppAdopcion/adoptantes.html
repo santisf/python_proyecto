@@ -1,0 +1,20 @@
+{% extends "AppAdopcion/inicio.html" %}
+{% load static %}
+{% block contenidoQueCambia %}
+<div class="container py-4">
+  <h1>Adoptantes</h1>
+
+  {% if adoptantes %}
+    <p>Lista de adoptantes registrados:</p>
+    <ul class="list-group">
+      {% for a in adoptantes %}
+        <li class="list-group-item">
+          <strong>{{ a.nombre }} {{ a.apellido }}</strong> — {{ a.email }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No hay adoptantes registrados.</p>
+  {% endif %}
+</div>
+{% endblock %}

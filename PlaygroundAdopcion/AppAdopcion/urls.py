@@ -1,11 +1,13 @@
-
 from django.urls import path
-from AppCoder import views
+from AppAdopcion import views
+
+
 
 urlpatterns = [
-    path('', views.inicio, name="Inicio"),   # Nuestra primer view
-    path('cursos/', views.cursos, name="Cursos"),
-    path('profesores/', views.profesores, name="Profesores"),
-    path('estudiantes/', views.estudiantes, name="Estudiantes"),
-    path('entregables/', views.entregables, name="Entregables"),
+    path('', views.inicio, name='inicio'),
+    path('animales/', views.cursos, name='animales_list'),
+    path('animales/nuevo/', views.animal_create, name='animal_create'),
+    path('adoptantes/', views.estudiantes, name='adoptantes_list'),
+    path('solicitudes/', views.entregables, name='solicitudes_list'),
+    path('buscar/', views.buscar, name='buscar'),
 ]

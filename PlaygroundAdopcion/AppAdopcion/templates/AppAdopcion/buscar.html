@@ -1,0 +1,25 @@
+{% extends "AppAdopcion/inicio.html" %}
+{% block contenidoQueCambia %}
+<div class="container py-4">
+  <h1>Resultados de búsqueda</h1>
+
+  {% if query %}
+    <p>Buscando: <strong>{{ query }}</strong></p>
+
+    {% if resultados %}
+      <ul class="list-group">
+        {% for a in resultados %}
+          <li class="list-group-item">
+            <strong>{{ a.nombre }}</strong> — {{ a.especie }} {% if a.edad %} ({{ a.edad }}){% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No se encontraron resultados para "<strong>{{ query }}</strong>".</p>
+    {% endif %}
+
+  {% else %}
+    <p>Ingresá un término en el buscador para encontrar animales por nombre.</p>
+  {% endif %}
+</div>
+{% endblock %}
