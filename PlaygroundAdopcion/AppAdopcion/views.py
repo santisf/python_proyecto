@@ -7,18 +7,18 @@ from .forms import AnimalForm, AdoptanteForm, SolicitudForm
 def inicio(request):
     return render(request, "AppAdopcion/inicio.html")
 
-def cursos(request):   # muestra animales (nombre de la función se mantiene)
+def animales(request):   # muestra animales 
     lista_animales = Animal.objects.all()
     return render(request, "AppAdopcion/animales.html", {"cursos": lista_animales})
 
-def profesores(request):  # plantilla genérica / formulario
+def animal_create(request):  # plantilla genérica / formulario
     return render(request, "AppAdopcion/animal_create.html")
 
-def estudiantes(request):  # muestra adoptantes
+def adoptantes(request):  # muestra adoptantes
     lista_adoptantes = Adoptante.objects.all()
     return render(request, "AppAdopcion/adoptantes.html", {"adoptantes": lista_adoptantes})
 
-def entregables(request):  # muestra solicitudes
+def solicitudes(request):  # muestra solicitudes
     lista_solicitudes = Solicitud.objects.all()
     return render(request, "AppAdopcion/solicitudes.html", {"solicitudes": lista_solicitudes})
 
