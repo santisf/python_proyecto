@@ -7,4 +7,4 @@
 6. Ir a "Animales" y crear animales (o usar "Nuevo Animal").
 7. Ir a "Adoptantes" y crear adoptantes.
 8. Desde la ficha de un animal o desde "Solicitudes" crear una solicitud de adopción.
-9. Probar búsqueda en `/buscar/?q=nombre`.
+9. Probar búsqueda en `/buscar/?q=nombre`..\venv\Scripts\Activate.ps1
