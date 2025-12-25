@@ -1,33 +1,62 @@
-{% extends "AppAdopcion/inicio.html" %}
+{% extends 'AppAdopcion/inicio.html' %}
 {% load static %}
 {% block contenidoQueCambia %}
-<div class="container py-4">
-  <h1>Crear Solicitud</h1>
+<div class="container py-5">
+  <div class="card mx-auto" style="max-width:720px;">
+    <div class="card-body" style="background-color: #dae2cb;">
+      <h4>Solicitar adopción</h4>
 
-  {% if form.errors %}
-    <div class="alert alert-danger">
-      <strong>Corrige los errores:</strong>
-      <ul>
-        {% for field in form %}
-          {% for error in field.errors %}
-            <li>{{ field.label }}: {{ error }}</li>
-          {% endfor %}
-        {% endfor %}
-        {% for error in form.non_field_errors %}
-          <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
+      {% if animal %}
+        <div class="mb-3 d-flex align-items-center">
+          <div style="width:140px; height:120px; overflow:hidden; border-radius:8px; margin-right:12px;">
+            {% if animal.foto %}
+              <img src="{{ animal.foto.url }}" alt="{{ animal.nombre }}" style="width:100%; height:100%; object-fit:cover;">
+            {% else %}
+              <img src="{% static 'img/no-image.png' %}" alt="Sin foto" style="width:100%; height:100%; object-fit:cover;">
+            {% endif %}
+          </div>
+          <div>
+            <p class="mb-0"><strong>{{ animal.nombre }}</strong></p>
+            <p class="text-muted mb-0">{{ animal.especie }} · {{ animal.edad }}</p>
+          </div>
+        </div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label class="form-label">Nombre</label>
+          {{ form.first_name }}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Apellido</label>
+          {{ form.last_name }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.telefono.label_tag }}
+          {{ form.telefono }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.mensaje.label_tag }}
+          {{ form.mensaje }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.estado.label_tag }}
+          {{ form.estado }}
+        </div>
+
+        <div class="mb-3 text-muted">
+          Fecha de solicitud: {% if form.instance.fecha_de_solicitud %}{{ form.instance.fecha_de_solicitud }}{% else %}{% now "d M. Y H:i" %}{% endif %}
+        </div>
+
+        <button class="btn btn-adopcion" type="submit">Guardar</button>
+      </form>
     </div>
-  {% endif %}
-
-  <form method="post" novalidate>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-primary" type="submit">Guardar</button>
-    <a class="btn btn-secondary" href="{% url 'solicitudes_list' %}">Volver a la lista</a>
-  </form>
-
-  <hr>
-  <p>También podés crear animales desde el <a href="/admin/">panel de administración</a>.</p>
+  </div>
 </div>
 {% endblock %}

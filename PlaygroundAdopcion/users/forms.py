@@ -10,17 +10,15 @@ class UserEditForm(forms.ModelForm):
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
         widgets = {
-            'username': forms.TextInput(attrs={'readonly': 'readonly'}),
-            'email': forms.EmailInput(attrs={'placeholder': 'tu@ejemplo.com'}),
-            'first_name': forms.TextInput(attrs={'placeholder': 'Nombre'}),
-            'last_name': forms.TextInput(attrs={'placeholder': 'Apellido'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Usuario'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'tu@ejemplo.com'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apellido'}),
         }
-        labels = {
-            'username': 'Usuario',
-            'email': 'Email',
-            'first_name': 'Nombre',
-            'last_name': 'Apellido',
-        }
+    def __init__(self, *args, **kwargs): 
+        super().__init__(*args, **kwargs) 
+        # alternativa: deshabilitar el campo para que no se envíe en POST self.fields['username'].disabled = True
+
 
 
 class UserRegisterForm(UserCreationForm):

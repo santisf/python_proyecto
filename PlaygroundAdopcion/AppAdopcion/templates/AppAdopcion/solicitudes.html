@@ -5,16 +5,88 @@
   <h1>Solicitudes</h1>
 
   {% if solicitudes %}
-    <p>Listado de solicitudes de adopción:</p>
-    <ul class="list-group">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
       {% for s in solicitudes %}
-        <li class="list-group-item">
-          <strong>{{ s.animal.nombre }}</strong> — solicitante: {{ s.adoptante.nombre }}; fecha: {{ s.fecha_de_solicitud }}; estado: {{ s.estado }}
-        </li>
+        <div class="col">
+          <div class="card card-solicitud h-100" style="background-color: #dae2cb;">
+            <div class="row g-0 align-items-center">
+              <div class="col-auto">
+                <div class="thumb-solicitud">
+                  {% if s.animal.foto %}
+                    <img src="{{ s.animal.foto.url }}" alt="{{ s.animal.nombre }}"
+                         class="img-cover"
+                         style="width:90px !important; height:70px !important; object-fit:cover !important; display:block;">
+                  {% else %}
+                    <img src="{% static 'img/no-image.png' %}" alt="Sin foto"
+                         class="img-cover"
+                         style="width:90px !important; height:70px !important; object-fit:cover !important; display:block;">
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col">
+                <div class="card-body py-2 px-3">
+                  <h6 class="card-title mb-1">{{ s.animal.nombre }}</h6>
+                  <p class="mb-1 small">
+                    {{ s.user.get_full_name|default:s.user.username }} — solicitante
+                  </p>
+                  <p class="mb-1 small text-muted">fecha: {{ s.fecha_de_solicitud|date:"d M. Y" }}</p>
+                  <p class="mb-0 small"><span class="badge bg-secondary">{{ s.get_estado_display }}</span></p>
+
+                  {# Botón Eliminar: solo visible para el propietario o staff (sin paréntesis) #}
+                  {% if user.is_authenticated %}
+                    {% if user.is_staff or user == s.user %}
+                      <form method="post" action="{% url 'solicitud_delete' s.pk %}" class="mt-2">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="btn btn-sm btn-danger btn-adopcion"
+                                onclick="return confirm('¿Eliminar esta solicitud? Esta acción no se puede deshacer.');"
+                                >
+                          Eliminar
+                        </button>
+                      </form>
+                    {% endif %}
+                  {% endif %}
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       {% endfor %}
-    </ul>
+    </div>
+
+    {% if page_obj %}
+      <div class="d-flex justify-content-center mt-4">
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            {% if page_obj.has_previous %}
+              <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+              {% if page_obj.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+              {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+              <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    {% endif %}
+
   {% else %}
-    <p>No hay solicitudes registradas.</p>
+    <p>No hay solicitudes registradas todavía.</p>
   {% endif %}
 </div>
 {% endblock %}

@@ -4,7 +4,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm 
 from .forms import UserRegisterForm
 from django.contrib.auth.decorators import login_required
-
+from .forms import UserEditForm
+from django.urls import reverse
 
 """
 def login_request(request):
@@ -26,6 +27,21 @@ def login_request(request):
         form = AuthenticationForm()
 
     return render(request, "users/login.html", {"form": form, "msg_login": msg_login})"""
+
+
+
+@login_required
+def editar_perfil(request):
+    usuario = request.user
+    if request.method == 'POST':
+        form = UserEditForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('inicio'))
+    else:
+        form = UserEditForm(instance=usuario)
+
+    return render(request, 'users/editar_usuario.html', {'form': form})
 
 
 def login_request(request):

@@ -6,20 +6,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    telefono = models.CharField(max_length=30, blank=True)
-
-    def __str__(self):
-        return f"{self.user.username} - Profile"
-
-@receiver(post_save, sender=User)
-def create_or_update_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-    else:
-        Profile.objects.get_or_create(user=instance)
 
 
 class Animal(models.Model):
@@ -44,13 +32,14 @@ class Animal(models.Model):
         return f"{self.nombre} ({self.get_estado_display()})"
 
 class Adoptante(models.Model):
-    nombre = models.CharField(max_length=40)
-    apellido = models.CharField(max_length=40)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    nombre = models.CharField(max_length=100)
+    apellido = models.CharField(max_length=100)
     email = models.EmailField()
-    telefono = models.CharField(max_length=30, blank=True)
-
+    telefono = models.CharField(max_length=30, blank=True, null=True)
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
+
 
 class Solicitud(models.Model):
     ESTADOS = [
@@ -59,24 +48,37 @@ class Solicitud(models.Model):
         ("cancelado", "Cancelado"),
     ]
 
-    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
-    adoptante = models.ForeignKey(Adoptante, on_delete=models.CASCADE)
-    fecha_de_solicitud = models.DateField()
-    estado = models.CharField(
-        max_length=20,
-        choices=ESTADOS,
-        default="en_proceso"
-    )
+    animal = models.ForeignKey('Animal', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    telefono = models.CharField(max_length=30, blank=True, null=True)
+    mensaje = models.TextField(blank=True)
+    fecha_de_solicitud = models.DateField(default=timezone.now)
+    estado = models.CharField(max_length=20, choices=ESTADOS, default="en_proceso")
 
     def __str__(self):
-        return f"Solicitud de {self.adoptante} para {self.animal} ({self.get_estado_display()})"
+        nombre_usuario = self.user.get_full_name() or self.user.username
+        return f"Solicitud de {nombre_usuario} para {self.animal} ({self.get_estado_display()})"
 
     def save(self, *args, **kwargs):
+        # detectar cambio de estado para actualizar fecha
+        if self.pk:
+            old = Solicitud.objects.filter(pk=self.pk).first()
+            old_estado = old.estado if old else None
+        else:
+            old_estado = None
+
+        # si es nueva o cambió el estado, actualizar fecha a hoy
+        if old_estado is None or old_estado != self.estado:
+            self.fecha_de_solicitud = timezone.now().date()
+
         super().save(*args, **kwargs)
-        # Actualizar estado del animal según la solicitud
+
+        # actualizar estado del animal según la solicitud
         if self.estado == "aprobado":
             self.animal.estado = "adoptado"
         else:
-            # Si no está aprobado, el animal sigue disponible
+            # si no está aprobado, dejar disponible (ajustá si querés otra lógica)
             self.animal.estado = "disponible"
         self.animal.save()
+
+

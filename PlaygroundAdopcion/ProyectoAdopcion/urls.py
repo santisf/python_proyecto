@@ -24,7 +24,10 @@ urlpatterns = [
     path('', include('AppAdopcion.urls')),
     #path('core/', include('core.urls')),
     path('usuarios/', include(('users.urls', 'users'), namespace='users')), # registra 'users'
+    
+
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

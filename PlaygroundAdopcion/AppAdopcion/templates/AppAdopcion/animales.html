@@ -6,26 +6,33 @@
   <div class="container">
     <div class="row row-cols-1 row-cols-md-3 g-4">
       {% for animal in animales %}
-      <div class="col">
-        <div class="card h-100" style="background-color: #dae2cb;">
-          {% if animal.foto %}
-            <img src="{{ animal.foto.url }}" class="card-img-top" alt="{{ animal.nombre }}">
-          {% else %}
-            <img src="{% static 'img/no-image.png' %}" class="card-img-top" alt="Sin foto">
-          {% endif %}
-          <div class="card-body">
-            <h5 class="card-title">{{ animal.nombre }}</h5>
-            <p class="card-text">Especie: {{ animal.especie }}</p>
-            <p class="card-text">Edad: {{ animal.edad }}</p>
-            <p class="card-text">{{ animal.descripcion }}</p>
-            <p class="fw-bold">Estado: {{ animal.get_estado_display }}</p>
-            <a href="{% url 'solicitud_create' %}" class="btn btn-adopcion">Gestionar adopción</a>
+        <div class="col">
+          <div class="card h-100" style="background-color: #dae2cb;">
+            {% if animal.foto %}
+              <img src="{{ animal.foto.url }}" class="card-img-top img-fluid" alt="{{ animal.nombre }}">
+            {% else %}
+              <img src="{% static 'img/no-image.png' %}" class="card-img-top img-fluid" alt="Sin foto">
+            {% endif %}
+
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ animal.nombre }}</h5>
+              <p class="card-text">Especie: {{ animal.especie }}</p>
+              <p class="card-text">Edad: {{ animal.edad }}</p>
+              <p class="card-text">{{ animal.descripcion|truncatechars:120 }}</p>
+              <p class="fw-bold mt-auto">Estado: {{ animal.get_estado_display }}</p>
+
+              {% if user.is_authenticated %}
+                <a href="{% url 'solicitud_create_with_animal' animal.pk %}" class="btn btn-adopcion mt-2">Gestionar adopción</a>
+              {% else %}
+                <a href="{% url 'users:login' %}?next={% url 'solicitud_create_with_animal' animal.pk %}" class="btn btn-adopcion mt-2">Gestionar adopción</a>
+              {% endif %}
+            </div>
           </div>
         </div>
-      </div>
       {% empty %}
-      <p>No hay animales registrados todavía.</p>
+        <p>No hay animales registrados todavía.</p>
       {% endfor %}
+
     </div>
   </div>
 </section>
