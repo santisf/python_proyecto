@@ -1,11 +1,21 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Configuración de archivos estáticos
+STATIC_URL = '/static/'
+
+# Configuración de archivos multimedia
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+
 SECRET_KEY = 'django-insecure-s&)10s%5iqlyu)c3%ckq(+&75!7@v@192k3ziy%k4hz0sq@vum'
 DEBUG = True
 ALLOWED_HOSTS = []
-
+LOGIN_URL= "/usuarios/login"
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -14,6 +24,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'AppAdopcion',
+    
+    'users',
 ]
 
 MIDDLEWARE = [

@@ -1,25 +1,32 @@
 {% extends "AppAdopcion/inicio.html" %}
+{% load static %}
 {% block contenidoQueCambia %}
 <div class="container py-4">
-  <h1>Resultados de búsqueda</h1>
-
-  {% if query %}
-    <p>Buscando: <strong>{{ query }}</strong></p>
-
-    {% if resultados %}
-      <ul class="list-group">
-        {% for a in resultados %}
-          <li class="list-group-item">
-            <strong>{{ a.nombre }}</strong> — {{ a.especie }} {% if a.edad %} ({{ a.edad }}){% endif %}
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>No se encontraron resultados para "<strong>{{ query }}</strong>".</p>
-    {% endif %}
-
+  <h2>Resultados de búsqueda</h2>
+  {% if resultados %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      {% for animal in resultados %}
+      <div class="col">
+        <div class="card h-100 card-animal" style="background-color: #dae2cb;">
+          {% if animal.foto %}
+            <img src="{{ animal.foto.url }}" class="card-img-top" alt="{{ animal.nombre }}">
+          {% else %}
+            <img src="{% static 'img/no-image.png' %}" class="card-img-top" alt="Sin foto">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ animal.nombre }}</h5>
+            <p class="card-text">Especie: {{ animal.especie }}</p>
+            <p class="card-text">Edad: {{ animal.edad }}</p>
+            <p class="card-text">{{ animal.descripcion }}</p>
+            <p class="fw-bold">Estado: {{ animal.get_estado_display }}</p>
+            <a href="{% url 'solicitud_create' %}" class="btn btn-adopcion">Gestionar adopción</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
   {% else %}
-    <p>Ingresá un término en el buscador para encontrar animales por nombre.</p>
+    <p>No se encontraron animales que coincidan con "{{ query }}".</p>
   {% endif %}
 </div>
 {% endblock %}

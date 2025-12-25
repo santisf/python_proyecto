@@ -1,0 +1,25 @@
+{% extends "AppAdopcion/inicio.html" %}
+{% load static %}
+{% block contenidoQueCambia %}
+<section class="py-5">
+  <div class="container">
+    <div class="card mx-auto" style="max-width: 600px; background-color: #dae2cb;">
+      {% if animal.foto %}
+        <img src="{{ animal.foto.url }}" class="card-img-top" alt="{{ animal.nombre }}">
+      {% else %}
+        <img src="{% static 'img/no-image.png' %}" class="card-img-top" alt="Sin foto">
+      {% endif %}
+      <div class="card-body">
+        <h3 class="card-title">{{ animal.nombre }}</h3>
+        <p class="card-text"><strong>Especie:</strong> {{ animal.especie }}</p>
+        <p class="card-text"><strong>Edad:</strong> {{ animal.edad }}</p>
+        <p class="card-text"><strong>Descripción:</strong> {{ animal.descripcion }}</p>
+        <p class="fw-bold"><strong>Estado:</strong> {{ animal.get_estado_display }}</p>
+        <a href="{% url 'animal_update' animal.id %}" class="btn btn-warning">Editar</a>
+        <a href="{% url 'animal_delete' animal.id %}" class="btn btn-danger">Eliminar</a>
+        <a href="{% url 'animales_list' %}" class="btn btn-secondary">Volver</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

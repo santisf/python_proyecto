@@ -1,0 +1,33 @@
+{% extends "AppAdopcion/inicio.html" %}
+{% load static %}
+{% block contenidoQueCambia %}
+<div class="container py-4">
+  <h1>Crear Adoptante</h1>
+
+  {% if form.errors %}
+    <div class="alert alert-danger">
+      <strong>Corrige los errores:</strong>
+      <ul>
+        {% for field in form %}
+          {% for error in field.errors %}
+            <li>{{ field.label }}: {{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary" type="submit">Guardar</button>
+    <a class="btn btn-secondary" href="{% url 'adoptantes_list' %}">Volver a la lista</a>
+  </form>
+
+  <hr>
+  <p>También podés crear animales desde el <a href="/admin/">panel de administración</a>.</p>
+</div>
+{% endblock %}

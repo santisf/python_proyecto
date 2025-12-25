@@ -9,7 +9,7 @@
     <ul class="list-group">
       {% for s in solicitudes %}
         <li class="list-group-item">
-          <strong>{{ s.animal_nombre }}</strong> — solicitante: {{ s.adoptante_nombre }}; fecha: {{ s.fecha_de_solicitud }}; estado: {{ s.estado }}
+          <strong>{{ s.animal.nombre }}</strong> — solicitante: {{ s.adoptante.nombre }}; fecha: {{ s.fecha_de_solicitud }}; estado: {{ s.estado }}
         </li>
       {% endfor %}
     </ul>

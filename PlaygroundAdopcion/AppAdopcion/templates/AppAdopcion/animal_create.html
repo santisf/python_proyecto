@@ -20,11 +20,12 @@
     </div>
   {% endif %}
 
-  <form method="post" novalidate>
+  <!-- IMPORTANTE: enctype para subir imágenes -->
+  <form method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     {{ form.as_p }}
-    <button class="btn btn-primary" type="submit">Guardar</button>
-    <a class="btn btn-secondary" href="{% url 'animales_list' %}">Volver a la lista</a>
+    <button class="btn btn-nuevo px-3" type="submit">Guardar</button>
+    <a class="btn btn-nuevo px-3" href="{% url 'animales_list' %}">Volver a la lista</a>
   </form>
 
   <hr>

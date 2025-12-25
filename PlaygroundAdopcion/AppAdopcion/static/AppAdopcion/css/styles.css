@@ -10,6 +10,148 @@
  * Copyright 2011-2022 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+
+ /* Paleta del proyecto (ajustá los valores si ya tenés otros) */
+:root {
+  --adopcion-primary: #0d6efd;      /* color principal (botones) */
+  --adopcion-accent: #ff7a59;       /* color secundario / acento */
+  --adopcion-bg: #ffffff;           /* fondo de la carta */
+  --adopcion-muted: #6c757d;        /* texto secundario */
+  --adopcion-border: rgba(13,110,253,0.12);
+}
+
+.logout-card .card-body {
+  background-color: #dae2cb;
+}
+
+/* Carta de logout */
+.logout-card {
+  width: 100%;
+  max-width: 520px;
+  border-radius: 12px;
+  background: var(--adopcion-bg);
+  
+  border: 1px solid var(--adopcion-border);
+  box-shadow: 0 6px 18px rgba(20, 20, 20, 0.06);
+  overflow: hidden;
+}
+
+/* Hero circular con icono ✓ */
+.logout-hero {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-size: 32px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--adopcion-primary), var(--adopcion-accent));
+  box-shadow: 0 6px 14px rgba(13,110,253,0.12);
+}
+
+/* Botones: reutiliza btn-adopcion si existe */
+.btn-adopcion, .btn-primary-custom {
+  background: var(--adopcion-primary);
+  color: #fff;
+  border: none;
+  padding: .5rem .9rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform .08s ease, box-shadow .12s ease;
+}
+.btn-adopcion:hover, .btn-primary-custom:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(13,110,253,0.12);
+}
+
+/* Botón secundario estilo outline */
+.btn-outline-custom {
+  background: transparent;
+  color: var(--adopcion-primary);
+  border: 1px solid var(--adopcion-border);
+  padding: .5rem .9rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Texto y espaciados */
+.logout-card .card-body h2 { color: #111827; }
+.logout-card .card-body p { color: var(--adopcion-muted); }
+
+/* Responsive: reducir ancho en pantallas pequeñas */
+@media (max-width: 420px) {
+  .logout-card { margin: 0 1rem; max-width: calc(100% - 2rem); }
+  .logout-hero { width: 60px; height: 60px; font-size: 28px; }
+  .btn-adopcion, .btn-outline-custom { padding: .45rem .7rem; font-size: .95rem; }
+}
+
+.header-bg {
+  background-image: url("../assets/img/fondo-header.png");
+  background-size: 100% auto;         /* ocupa todo el ancho sin recorte */
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: #dae2cb;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+body { color: #212529 !important; }
+
+
+.btn-busqueda {
+  background-color: #212529 !important; 
+  color: #dae2cb !important;
+  border: none;
+}
+
+.btn-busqueda:hover {
+  background-color: #6cb6a5 !important;
+  color: #fff !important;
+  
+}
+
+/* Botón Gestionar adopción */
+.btn-adopcion {
+  background-color: #90425c !important;
+  color: #dae2cb !important;
+  border: none;
+}
+
+.btn-adopcion:hover {
+  background-color: #90425c !important; /* mantiene el fondo */
+  color: #fff !important;           /* cambia el color de la letra */
+  border: 2px solid #6cb6a5 !important; /* borde suave */
+}
+
+/* Paginación activa */
+.pagination .page-item.active .page-link {
+  background-color: #90425c !important;
+  border-color: #90425c !important;
+  color: #fff !important; /* texto blanco para contraste */
+  
+}
+
+
+
+
+body { background-color: #6cb6a5 !important; /* fondo general */ }
+.btn-nuevo {
+  background-color: #dae2cb !important; /* fondo gris claro verdoso */
+  color: #221d34 !important;            /* texto oscuro */
+  border: 1px solid #c5cbb5 !important; /* borde suave */
+}
+
+.btn-nuevo:hover {
+  background-color: #6cb6a5 !important; /* hover más oscuro */
+  color: white !important;
+  border: 1px solid #b8bea8 !important; /* borde hover */
+}
+
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
@@ -90,6 +232,8 @@
     scroll-behavior: smooth;
   }
 }
+
+
 
 body {
   margin: 0;

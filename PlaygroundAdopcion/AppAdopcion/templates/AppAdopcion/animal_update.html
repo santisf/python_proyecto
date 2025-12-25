@@ -1,0 +1,15 @@
+{% extends "AppAdopcion/inicio.html" %}
+{% load static %}
+{% block contenidoQueCambia %}
+<section class="py-5">
+  <div class="container">
+    <h2 class="mb-4">Editar Animal</h2>
+    <form method="post" enctype="multipart/form-data" class="bg-light p-4 rounded">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Guardar cambios</button>
+      <a href="{% url 'animales_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+</section>
+{% endblock %}

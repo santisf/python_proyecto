@@ -1,4 +1,5 @@
-from django.shortcuts import render
+
+"""from django.shortcuts import render
 from AppAdopcion.models import Animal, Adoptante, Solicitud
 from django.shortcuts import redirect
 from .forms import AnimalForm, AdoptanteForm, SolicitudForm
@@ -9,7 +10,7 @@ def inicio(request):
 
 def animales(request):   # muestra animales 
     lista_animales = Animal.objects.all()
-    return render(request, "AppAdopcion/animales.html", {"cursos": lista_animales})
+    return render(request, "AppAdopcion/animales.html", {"animales": lista_animales})
 
 def animal_create(request):  # plantilla genérica / formulario
     return render(request, "AppAdopcion/animal_create.html")
@@ -58,4 +59,4 @@ def solicitud_create(request):
             return redirect('solicitudes_list')
     else:
         form = SolicitudForm()
-    return render(request, "AppAdopcion/solicitud_create.html", {"form": form})
+    return render(request, "AppAdopcion/solicitud_create.html", {"form": form})"""
