@@ -15,9 +15,24 @@
         <p class="card-text"><strong>Edad:</strong> {{ animal.edad }}</p>
         <p class="card-text"><strong>Descripción:</strong> {{ animal.descripcion }}</p>
         <p class="fw-bold"><strong>Estado:</strong> {{ animal.get_estado_display }}</p>
-        <a href="{% url 'animal_update' animal.id %}" class="btn btn-warning">Editar</a>
-        <a href="{% url 'animal_delete' animal.id %}" class="btn btn-danger">Eliminar</a>
-        <a href="{% url 'animales_list' %}" class="btn btn-secondary">Volver</a>
+
+        <div class="mt-3 d-flex gap-2">
+          {# Botón Adoptar: si está autenticado va directo al formulario con animal_pk #}
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'solicitud_create_with_animal' animal.pk %}" class="btn btn-adopcion">Adoptar</a>
+          {% else %}
+            {# Redirigir al login y luego al formulario de solicitud para este animal #}
+            <a href="{% url 'users:login' %}?next={% url 'solicitud_create_with_animal' animal.pk %}" class="btn btn-adopcion">Adoptar</a>
+          {% endif %}
+
+          {# Editar/Eliminar solo para superuser (ya lo tenías) #}
+          {% if request.user.is_superuser %}
+            <a href="{% url 'animal_update' animal.pk %}" class="btn btn-warning">Editar</a>
+            <a href="{% url 'animal_delete' animal.pk %}" class="btn btn-danger">Eliminar</a>
+          {% endif %}
+
+          <a href="{% url 'animales_list' %}" class="btn btn-secondary">Volver</a>
+        </div>
       </div>
     </div>
   </div>

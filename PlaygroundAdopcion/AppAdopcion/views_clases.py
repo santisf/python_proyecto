@@ -1,27 +1,14 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from AppAdopcion.models import Animal, Adoptante, Solicitud
-from .forms import AnimalForm, AdoptanteForm, SolicitudForm
+from .forms import AnimalForm, AdoptanteForm, SolicitudForm, SolicitudAdminForm
 from django.views.generic import TemplateView
-from django.views.generic import ListView
-from AppAdopcion.models import Animal
 from django.db.models import Q
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-
-
-# AppAdopcion/views.py (o views_clases.py)
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, UpdateView
-from django.contrib.auth.decorators import login_required
-from django.utils import timezone
-from .models import Solicitud, Animal
-from .forms import SolicitudForm
+from django.core.exceptions import PermissionDenied
 
 
 
@@ -56,6 +43,32 @@ class InicioView(TemplateView):
 # -------------------
 # ANIMAL
 # -------------------
+
+
+class AnimalUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Animal
+    form_class = AnimalForm
+    template_name = "AppAdopcion/animal_update.html"
+    success_url = reverse_lazy("animales_list")
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def handle_no_permission(self):
+        raise PermissionDenied
+
+class AnimalDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Animal
+    template_name = "AppAdopcion/animal_delete.html"
+    success_url = reverse_lazy('animales_list')
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def handle_no_permission(self):
+        raise PermissionDenied
+
+
 class AnimalListView(ListView):
     model = Animal
     template_name = "AppAdopcion/animales.html"
@@ -67,10 +80,6 @@ class AnimalDetailView(DetailView):
     template_name = "AppAdopcion/animal_detail.html"
     context_object_name = "animal"
 
-class AnimalDeleteView(DeleteView): 
-    model = Animal 
-    template_name = "AppAdopcion/animal_delete.html" 
-    success_url = reverse_lazy('animales_list')    
 
 
 class AnimalCreateView(CreateView):
@@ -80,11 +89,7 @@ class AnimalCreateView(CreateView):
     success_url = reverse_lazy("animales_list")
 
 
-class AnimalUpdateView(UpdateView):
-    model = Animal
-    form_class = AnimalForm
-    template_name = "AppAdopcion/animal_update.html"
-    success_url = reverse_lazy("animales_list")
+
 
 
 # -------------------
@@ -177,39 +182,69 @@ class SolicitudCreateView(CreateView):
         return super().form_valid(form)
 
 
-@method_decorator(login_required(login_url=reverse_lazy('users:login')), name='dispatch')
-class SolicitudUpdateView(UpdateView):
+class SolicitudUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Solicitud
-    form_class = SolicitudForm
     template_name = 'AppAdopcion/solicitud_update.html'
     success_url = reverse_lazy('solicitudes_list')
 
-    def get_initial(self):
-        initial = super().get_initial()
-        initial['first_name'] = self.object.user.first_name
-        initial['last_name'] = self.object.user.last_name
-        return initial
+    def get_form_class(self):
+        # permitir a superuser y staff editar estado (ajustá si solo querés superuser)
+        if self.request.user.is_superuser or self.request.user.is_staff:
+            return SolicitudAdminForm
+        return SolicitudForm
+
+    def get_form(self, form_class=None):
+        form_class = form_class or self.get_form_class()
+        form = super().get_form(form_class)
+
+        try:
+            obj = self.get_object()
+        except Exception:
+            obj = None
+
+        if obj and 'first_name' in form.fields and 'last_name' in form.fields:
+            form.fields['first_name'].initial = obj.user.first_name
+            form.fields['last_name'].initial = obj.user.last_name
+
+        # marca útil para la plantilla
+        form.form_has_estado = 'estado' in form.fields
+
+        return form
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['animal'] = self.object.animal
+        # pasar la marca también al contexto por si la plantilla la prefiere
+        form = ctx.get('form')
+        ctx['form_has_estado'] = getattr(form, 'form_has_estado', False)
         return ctx
 
     def form_valid(self, form):
-        # actualizar nombre/apellido del user si cambian
-        first = form.cleaned_data.get('first_name')
-        last = form.cleaned_data.get('last_name')
-        user = self.object.user
-        changed = False
-        if first is not None and first != user.first_name:
-            user.first_name = first
-            changed = True
-        if last is not None and last != user.last_name:
-            user.last_name = last
-            changed = True
-        if changed:
-            user.save()
+        obj = self.get_object()
+        # guardar nombre/apellido en el User asociado si vienen en el form
+        if 'first_name' in form.cleaned_data or 'last_name' in form.cleaned_data:
+            first = form.cleaned_data.get('first_name', '').strip()
+            last = form.cleaned_data.get('last_name', '').strip()
+            if first or last:
+                user = obj.user
+                if first:
+                    user.first_name = first
+                if last:
+                    user.last_name = last
+                user.save()
+
+        # defensa: si no es superuser ni staff, forzar estado en_proceso
+        if not (self.request.user.is_superuser or self.request.user.is_staff):
+            form.instance.estado = 'en_proceso'
+
         return super().form_valid(form)
+
+    def test_func(self):
+        obj = self.get_object()
+        return self.request.user.is_superuser or self.request.user.is_staff or (obj.user == self.request.user)
+
+    def handle_no_permission(self):
+        raise PermissionDenied
+
 
 
 

@@ -21,11 +21,19 @@
               <p class="card-text">{{ animal.descripcion|truncatechars:120 }}</p>
               <p class="fw-bold mt-auto">Estado: {{ animal.get_estado_display }}</p>
 
-              {% if user.is_authenticated %}
-                <a href="{% url 'solicitud_create_with_animal' animal.pk %}" class="btn btn-adopcion mt-2">Gestionar adopción</a>
-              {% else %}
-                <a href="{% url 'users:login' %}?next={% url 'solicitud_create_with_animal' animal.pk %}" class="btn btn-adopcion mt-2">Gestionar adopción</a>
-              {% endif %}
+              <div class="mt-2 d-flex gap-2">
+                {# Gestionar adopción -> lleva al detalle del animal #}
+                {% if user.is_authenticated %}
+                  <a href="{% url 'animal_detail' animal.pk %}" class="btn btn-adopcion">Gestionar adopción</a>
+                {% else %}
+                  <a href="{% url 'users:login' %}?next={% url 'animal_detail' animal.pk %}" class="btn btn-adopcion">Gestionar adopción</a>
+                {% endif %}
+
+              
+                {% if user.is_superuser %}
+                  <a href="{% url 'animal_detail' animal.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                {% endif %}
+              </div>
             </div>
           </div>
         </div>

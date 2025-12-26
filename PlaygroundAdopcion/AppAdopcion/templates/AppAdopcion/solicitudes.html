@@ -31,22 +31,38 @@
                     {{ s.user.get_full_name|default:s.user.username }} — solicitante
                   </p>
                   <p class="mb-1 small text-muted">fecha: {{ s.fecha_de_solicitud|date:"d M. Y" }}</p>
-                  <p class="mb-0 small"><span class="badge bg-secondary">{{ s.get_estado_display }}</span></p>
 
-                  {# Botón Eliminar: solo visible para el propietario o staff (sin paréntesis) #}
-                  {% if user.is_authenticated %}
-                    {% if user.is_staff or user == s.user %}
-                      <form method="post" action="{% url 'solicitud_delete' s.pk %}" class="mt-2">
+                  {# Badge de estado con colores según valor #}
+                  <p class="mb-0 small">
+                    {% if s.estado == "en_proceso" %}
+                      <span class="badge bg-warning text-dark">En proceso</span>
+                    {% elif s.estado == "aprobado" %}
+                      <span class="badge bg-success">Aprobado</span>
+                    {% elif s.estado == "cancelado" %}
+                      <span class="badge bg-danger">Cancelado</span>
+                    {% else %}
+                      <span class="badge bg-secondary">{{ s.get_estado_display }}</span>
+                    {% endif %}
+                  </p>
+
+                  <div class="mt-2 d-flex gap-2">
+                    {# Botón Editar: solo visible para superusuario #}
+                    {% if request.user.is_superuser %}
+                      <a href="{% url 'solicitud_update' s.pk %}" class="btn btn-sm btn-busqueda">Editar</a>
+                    {% endif %}
+
+                    {# Botón Eliminar: visible para usuarios autenticados (la vista debe validar permisos) #}
+                    {% if request.user.is_authenticated %}
+                      <form method="post" action="{% url 'solicitud_delete' s.pk %}" style="display:inline;">
                         {% csrf_token %}
                         <button type="submit"
-                                class="btn btn-sm btn-danger btn-adopcion"
-                                onclick="return confirm('¿Eliminar esta solicitud? Esta acción no se puede deshacer.');"
-                                >
+                                class="btn btn-sm btn-adopcion"
+                                onclick="return confirm('¿Eliminar esta solicitud? Esta acción no se puede deshacer.');">
                           Eliminar
                         </button>
                       </form>
                     {% endif %}
-                  {% endif %}
+                  </div>
 
                 </div>
               </div>

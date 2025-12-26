@@ -5,8 +5,12 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .forms import UserRegisterForm
 from django.contrib.auth.decorators import login_required
 from .forms import UserEditForm
-from django.urls import reverse
-
+from django.urls import reverse, reverse_lazy
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import PerfilForm, AvatarForm
+from .models import Avatar
+from django.contrib import messages
 """
 def login_request(request):
     msg_login = ""
@@ -33,15 +37,33 @@ def login_request(request):
 @login_required
 def editar_perfil(request):
     usuario = request.user
-    if request.method == 'POST':
-        form = UserEditForm(request.POST, instance=usuario)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse('inicio'))
-    else:
-        form = UserEditForm(instance=usuario)
+    # Asegurar que exista el Avatar asociado
+    avatar, _ = Avatar.objects.get_or_create(user=usuario)
 
-    return render(request, 'users/editar_usuario.html', {'form': form})
+    if request.method == 'POST':
+        perfil_form = PerfilForm(request.POST, instance=usuario)
+        avatar_form = AvatarForm(request.POST, request.FILES, instance=avatar)
+
+        if perfil_form.is_valid() and avatar_form.is_valid():
+            perfil_form.save()
+            avatar_form.save()
+            messages.success(request, "Perfil actualizado correctamente.")
+            # Redirigir al mismo formulario de edición (PRG) para que el mensaje
+            # se muestre solo en la siguiente GET de esta misma URL
+            return redirect(reverse('users:editar_perfil'))
+        else:
+            messages.error(request, "Corrige los errores del formulario.")
+    else:
+        perfil_form = PerfilForm(instance=usuario)
+        avatar_form = AvatarForm(instance=avatar)
+
+    return render(request, 'users/editar_usuario.html', {
+        'perfil_form': perfil_form,
+        'avatar_form': avatar_form,
+    })
+
+
+
 
 
 def login_request(request):
@@ -70,4 +92,18 @@ def register(request):
     else:
         form = UserRegisterForm()
     return render(request, "users/registro.html", {"form": form, "msg_register": msg_register})
+
+
+
+from django.contrib import messages
+
+class PasswordChange(LoginRequiredMixin, PasswordChangeView):
+    template_name = "users/editar_pass.html"
+    success_url = reverse_lazy('users:editar_pass_done')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Contraseña cambiada correctamente.")
+        return super().form_valid(form)
+
+
 
